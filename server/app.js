@@ -1,4 +1,4 @@
-
+/*jslint node: true */
 "use strict";
 
 const http = require("http");
@@ -33,7 +33,8 @@ async function checkIf_attendanceTakenToday() {
     const endOfToday = getEndOf_Local_Today();
 
     const entities = await model.getAttendances_between(
-        startOfToday, endOfToday
+        startOfToday,
+        endOfToday
     );
 
     return model.countEntities(entities);
@@ -45,16 +46,13 @@ async function checkIf_attendanceTakenToday() {
 async function handle_take_attendance(request, response) {
     const flag = await checkIf_attendanceTakenToday();
 
-    if (flag == true)
-    {
+    if (flag === true) {
         console.log("Attendance has already been taken today");
-    }
-    else
-    {
+    } else {
         console.log("Attendence not taken today... Taking attendance");
 
         const attendance = {
-            timestamp: new Date(),
+            timestamp: new Date()
         };
         model.insertAttendance(attendance);
     }
@@ -67,10 +65,10 @@ async function handle_read_attendance(request, response) {
 
     const timestamps = attendances.map(
         (entity) => moment(entity.timestamp).tz("America/New_York").toString()
-    )
+    );
 
     const timestamps_html = timestamps.join("<br />\n");
-    const responseBody = "<p>"+timestamps_html+"</p>";
+    const responseBody = `<p>${timestamps_html}</p>`;
 
     response.setHeader("Content-Length", responseBody.length);
     response.write(responseBody);
@@ -81,19 +79,16 @@ async function handle_read_attendance(request, response) {
 
 
 const process_request = function (request, response) {
-    console.log("requested url frm browser :" + request.url);
+    console.log(`requested url frm browser :${request.url}`);
 
     const parsed_url = url.parse(request.url);
 
-    if (parsed_url.pathname === "/take_attendance")
-    {
+    if (parsed_url.pathname === "/take_attendance") {
         handle_take_attendance(request, response);
-    }
-    else if (parsed_url.pathname === "/read_attendance")
-    {
+    } else if (parsed_url.pathname === "/read_attendance") {
         handle_read_attendance(request, response);
     }
-}
+};
 
 //create a server object:
 const server = http.createServer(process_request);

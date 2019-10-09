@@ -13,13 +13,6 @@ console.log("Server starting.......")
 
 
 
-function convertDate_to_EasternTimezone(date) {
-	date = date.toLocaleString("en-US", {timeZone: "America/New_York"});
-	
-	return new Date(date);
-}
-
-
 function getStartOf_Local_Today() {
 	return moment().tz('America/New_York').startOf('day').toDate();
 }
@@ -70,7 +63,7 @@ async function handle_read_attendance(request, response) {
 	const [attendances] = await model.getAttendances()
 	
 	const timestamps = attendances.map(
-		(entity) => convertDate_to_EasternTimezone(entity.timestamp).toLocaleString()
+		(entity) => moment(entity.timestamp).tz('America/New_York').toString()
 	)
 	
 	const timestamps_html = timestamps.join('<br />\n')

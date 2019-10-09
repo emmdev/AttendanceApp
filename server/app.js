@@ -32,12 +32,12 @@ async function checkIf_attendanceTakenToday() {
 
     const endOfToday = getEndOf_Local_Today();
 
-    const entities = await model.getAttendances_between(
+    const [entities] = await model.getAttendances_between(
         startOfToday,
         endOfToday
     );
 
-    return model.countEntities(entities);
+    return entities.length > 0;
 }
 
 
@@ -52,7 +52,7 @@ async function handle_take_attendance(request, response) {
         console.log("Attendence not taken today... Taking attendance");
 
         const attendance = {
-            timestamp: new Date()
+            timestamp: new Date(),
         };
         model.insertAttendance(attendance);
     }

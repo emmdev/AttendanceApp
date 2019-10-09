@@ -10,7 +10,7 @@ const datastore = new Datastore();
 function insertAttendance(attendance) {
     return datastore.save({
         key: datastore.key("attendance"),
-        data: attendance
+        data: attendance,
     });
 }
 
@@ -24,6 +24,7 @@ function getAttendances() {
     return datastore.runQuery(query);
 }
 
+
 function getAttendances_between(startDate, endDate) {
     const query = datastore
         .createQuery("attendance")
@@ -33,17 +34,10 @@ function getAttendances_between(startDate, endDate) {
     return datastore.runQuery(query);
 }
 
-function countEntities([entities]) {
-    return entities.length > 0;
-}
-
-
 
 
 module.exports = {
     insertAttendance,
     getAttendances,
     getAttendances_between,
-    countEntities
 };
-

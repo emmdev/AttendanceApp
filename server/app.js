@@ -3,7 +3,7 @@
 
 const http = require('http');
 const url = require('url');
-
+const moment = require('moment-timezone');
 
 const model = require('./model')
 
@@ -21,19 +21,13 @@ function convertDate_to_EasternTimezone(date) {
 
 
 function getStartOf_Local_Today() {
-	const CURRENT_TIMEZONE_OFFSET = 4 // CHANGE this in November
-	
-	const now = new Date()
-	const hoursOffset = CURRENT_TIMEZONE_OFFSET //now.getTimezoneOffset() / 60
-	const startOfToday_Epoch = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), hoursOffset, 0, 0)
-	
-	return new Date(startOfToday_Epoch)
+	return moment().tz('America/New_York').startOf('day').toDate();
 }
 
 function getEndOf_Local_Today() {
 	const startOfToday = getStartOf_Local_Today()
 
-	return new Date(startOfToday.getTime() + 24*60*60*1000)
+	return moment(startOfToday).add(1, 'day').toDate()
 }
 
 

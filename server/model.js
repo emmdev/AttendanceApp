@@ -1,47 +1,43 @@
+/*jslint node: true */
+"use strict";
 
-const {Datastore} = require('@google-cloud/datastore');
+const {Datastore} = require("@google-cloud/datastore");
 
 const datastore = new Datastore();
 
 
 
 function insertAttendance(attendance) {
-	return datastore.save({
-		key: datastore.key('attendance'),
-		data: attendance,
-	});
-};
+    return datastore.save({
+        key: datastore.key("attendance"),
+        data: attendance,
+    });
+}
 
 
 function getAttendances() {
-	const query = datastore
-		.createQuery('attendance')
-		.order('timestamp', {descending: true})
-		.limit(10);
+    const query = datastore
+        .createQuery("attendance")
+        .order("timestamp", {descending: true})
+        .limit(10);
 
-	return datastore.runQuery(query);
-};
+    return datastore.runQuery(query);
+}
+
 
 function getAttendances_between(startDate, endDate) {
-	const query = datastore
-	.createQuery('attendance')
-	.filter('timestamp', '>=', startDate)
-	.filter('timestamp', '<', endDate)
-	
-	return datastore.runQuery(query)
-}
+    const query = datastore
+        .createQuery("attendance")
+        .filter("timestamp", ">=", startDate)
+        .filter("timestamp", "<", endDate);
 
-function countEntities([entities]) {
-	return entities.length > 0
+    return datastore.runQuery(query);
 }
-
 
 
 
 module.exports = {
-	insertAttendance,
-	getAttendances,
-	getAttendances_between,
-	countEntities
-}
-
+    insertAttendance,
+    getAttendances,
+    getAttendances_between,
+};

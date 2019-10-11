@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity() {
                             triosLocation.longitude = -80.4868219
                             val distanceInMeters = location.distanceTo(triosLocation)
 
-                            if (distanceInMeters < 20) {
+                            if (distanceInMeters < 50) {
                                 Toast.makeText(this@MainActivity, "I Am here", Toast.LENGTH_LONG).show()
 
                                 takeAttendance_to_Server()
@@ -181,6 +181,7 @@ class MainActivity : AppCompatActivity() {
 
     protected fun takeAttendance_to_Server() {
         val final_url = "https://hellotrioskitchener.appspot.com/take_attendance"
+        //val final_url = "http://10.3.200.182:8080/take_attendance"
 
         val okHttpClient = OkHttpClient()
 

@@ -44,35 +44,50 @@ async function checkIf_attendanceTakenToday() {
 
 
 async function handle_take_attendance(request, response) {
-    const flag = await checkIf_attendanceTakenToday();
+    try {
+        const flag = await checkIf_attendanceTakenToday();
+        
+        if (flag === true) {
+            console.log("Attendance has already been taken today");
+        } else {
+            console.log("Attendence not taken today... Taking attendance");
 
-    if (flag === true) {
-        console.log("Attendance has already been taken today");
-    } else {
-        console.log("Attendence not taken today... Taking attendance");
+            const attendance = {
+                timestamp: new Date(),
+            };
+            model.insertAttendance(attendance);
+        }
 
-        const attendance = {
-            timestamp: new Date(),
-        };
-        model.insertAttendance(attendance);
+        response.end();
+    
+    } catch(err) {
+        console.log(err);
+        console.log(err.message);
+        
+        response.end();
     }
-
-    response.end();
 }
 
 async function handle_read_attendance(request, response) {
-    const [attendances] = await model.getAttendances();
+    try {
+        const [attendances] = await model.getAttendances();
 
-    const timestamps = attendances.map(
-        (entity) => moment(entity.timestamp).tz("America/New_York").toString()
-    );
+        const timestamps = attendances.map(
+            (entity) => moment(entity.timestamp).tz("America/New_York").toString()
+        );
 
-    const timestamps_html = timestamps.join("<br />\n");
-    const responseBody = `<p>${timestamps_html}</p>`;
+        const timestamps_html = timestamps.join("<br />\n");
+        const responseBody = `<p>${timestamps_html}</p>`;
 
-    response.setHeader("Content-Length", responseBody.length);
-    response.write(responseBody);
-    response.end();
+        response.setHeader("Content-Length", responseBody.length);
+        response.write(responseBody);
+        response.end();
+    } catch(err) {
+        console.log(err);
+        console.log(err.message);
+        
+        response.end();
+    }
 }
 
 

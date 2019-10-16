@@ -10,6 +10,9 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 
@@ -18,6 +21,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import kotlinx.android.synthetic.main.activity_main.*
 
 import java.io.IOException
 import java.util.Locale
@@ -40,14 +44,31 @@ class MainActivity : AppCompatActivity() {
     private val txtLocation: TextView? = null
     private var txtContinueLocation: TextView? = null
     private var stringBuilder: StringBuilder? = null
-
-
+    internal var email: String? = ""
+    private var editText: EditText? = null
+     private var button: Button? = null
     private var isContinue = false
     private var isGPS = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        editText = findViewById<View>(R.id.editText) as EditText
+        button = findViewById<View>(R.id.button) as Button
+
+        button!!.setOnClickListener(View.OnClickListener {
+            email = editText!!.getText().toString()
+            Log.i("info", "onClick: Butten is clicked $email")
+        })
+
+
+
+
+
+
+
+
         this.txtContinueLocation = findViewById(R.id.txtContinueLocation)
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -180,7 +201,8 @@ class MainActivity : AppCompatActivity() {
 
 
     protected fun takeAttendance_to_Server() {
-        val final_url = "https://hellotrioskitchener.appspot.com/take_attendance"
+        val final_url = "https://hellotrioskitchener.appspot.com/take_attendance/"+ email
+        Log.i("info", "takeAttendance_to_Server: $final_url")
         //val final_url = "http://10.3.200.182:8080/take_attendance"
 
         val okHttpClient = OkHttpClient()

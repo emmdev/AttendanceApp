@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -57,17 +58,24 @@ class MainActivity : AppCompatActivity() {
         editText = findViewById<View>(R.id.editText) as EditText
         button = findViewById<View>(R.id.button) as Button
 
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+
+        val email1 = prefs.getString("email", "")
+        editText!!.setText(email1)
+        Log.i("info", "onCreate: email1" + email1!!)
+
+
+
+
         button!!.setOnClickListener(View.OnClickListener {
             email = editText!!.getText().toString()
+            val prefs = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
+            val editor = prefs.edit()
+            editor.putString("email", email)
+            editor.apply()
+
             Log.i("info", "onClick: Butten is clicked $email")
         })
-
-
-
-
-
-
-
 
         this.txtContinueLocation = findViewById(R.id.txtContinueLocation)
 

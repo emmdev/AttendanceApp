@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity() {
         editText!!.setText(email1)
         Log.i("info", "onCreate: email1" + email1!!)
 
+        email = email1
 
 
 

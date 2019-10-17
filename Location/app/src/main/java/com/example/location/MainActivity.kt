@@ -62,6 +62,8 @@ class MainActivity : AppCompatActivity() {
 
         val email1 = prefs.getString("email", "")
         editText!!.setText(email1)
+
+        email = email1
         Log.i("info", "onCreate: email1" + email1!!)
 
 

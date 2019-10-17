@@ -66,7 +66,6 @@ class MainActivity : AppCompatActivity() {
         email = email1
         Log.i("info", "onCreate: email1" + email1!!)
 
-        email = email1
 
 
 

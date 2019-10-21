@@ -7,13 +7,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.view.View
-import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 
@@ -36,6 +32,7 @@ import okhttp3.Response
 class MainActivity : AppCompatActivity() {
 
     private var mFusedLocationClient: FusedLocationProviderClient? = null
+
     private var wayLatitude = 0.0
     private var wayLongitude = 0.0
     private var locationRequest: LocationRequest? = null
@@ -43,9 +40,6 @@ class MainActivity : AppCompatActivity() {
     private val txtLocation: TextView? = null
     private var txtContinueLocation: TextView? = null
     private var stringBuilder: StringBuilder? = null
-    internal var email: String? = ""
-    private var editText: EditText? = null
-    private var button: Button? = null
 
 
     private var isContinue = false
@@ -54,31 +48,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        editText = findViewById<View>(R.id.editText) as EditText
-        button = findViewById<View>(R.id.button) as Button
-
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-
-        val email1 = prefs.getString("email", "")
-        editText!!.setText(email1)
-
-        email = email1
-        Log.i("info", "onCreate: email1" + email1!!)
-
-
-
-
-        button!!.setOnClickListener(View.OnClickListener {
-            email = editText!!.getText().toString()
-            val prefs = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
-            val editor = prefs.edit()
-            editor.putString("email", email)
-            editor.apply()
-
-            Log.i("info", "onClick: Butten is clicked $email")
-        })
-
         this.txtContinueLocation = findViewById(R.id.txtContinueLocation)
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -211,8 +180,8 @@ class MainActivity : AppCompatActivity() {
 
 
     protected fun takeAttendance_to_Server() {
-        val final_url = "https://hellotrioskitchener.appspot.com/take_attendance/"+ email
-
+        val final_url = "https://hellotrioskitchener.appspot.com/take_attendance"
+        //val final_url = "http://10.3.200.182:8080/take_attendance"
 
         val okHttpClient = OkHttpClient()
 

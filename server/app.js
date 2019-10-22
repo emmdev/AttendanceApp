@@ -98,7 +98,7 @@ async function handle_read_attendance(request, response) {
         const timestamps_html = timestamps.join("<br />\n");
 		const email_html =emails.join("<br />\n");
 		
-		const responseBody = `<p>${email_html}${timestamps_html}</p>`;
+		const responseBody = `<table><tr><td>${timestamps_html}</td>&nbsp;<td>${email_html}</td></tr></table>`;
 		
         response.setHeader("Content-Length", responseBody.length);
         response.write(responseBody);

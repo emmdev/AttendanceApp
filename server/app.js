@@ -53,7 +53,10 @@ async function handle_take_attendance(request, response) {
             console.log("Attendence not taken today... Taking attendance");
 
             const attendance = {
-                timestamp: new Date(),
+				timestamp: new Date(),
+				email:'resmiishani@gmail.com'
+				
+                
             };
             model.insertAttendance(attendance);
         }
@@ -75,10 +78,18 @@ async function handle_read_attendance(request, response) {
         const timestamps = attendances.map(
             (entity) => moment(entity.timestamp).tz("America/New_York").toString()
         );
+		 const emails = attendances.map(
+            (entity_email) => entity_email.email
+        );
+		
 
         const timestamps_html = timestamps.join("<br />\n");
-        const responseBody = `<p>${timestamps_html}</p>`;
-
+		//const email_html =emails.join("<br />\n");
+		
+		
+		
+        const responseBody = `<p>${emails}${timestamps_html}</p>`;
+		
         response.setHeader("Content-Length", responseBody.length);
         response.write(responseBody);
         response.end();
@@ -98,7 +109,7 @@ const process_request = function (request, response) {
 
     const parsed_url = url.parse(request.url);
 
-    if (parsed_url.pathname === "/take_attendance") {
+    if (parsed_url.pathname === "/take_attendance/resmiishani@gmail.com") {
         handle_take_attendance(request, response);
     } else if (parsed_url.pathname === "/read_attendance") {
         handle_read_attendance(request, response);

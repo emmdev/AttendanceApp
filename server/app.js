@@ -4,6 +4,7 @@
 const http = require("http");
 const url = require("url");
 const moment = require("moment-timezone");
+let message_text = "";
 
 const model = require("./model");
 
@@ -26,14 +27,16 @@ function getEndOf_Local_Today() {
 
 // check if todays_attendance already has a date with
 // the same calendar day as currentDate
-async function checkIf_attendanceTakenToday() {
+async function checkIf_attendanceTakenToday(email) {
 
     const startOfToday = getStartOf_Local_Today();
 
     const endOfToday = getEndOf_Local_Today();
+	
+	email=" ";
 
     const [entities] = await model.getAttendances_between(
-        startOfToday,
+        email,startOfToday,
         endOfToday
     );
 
@@ -51,13 +54,21 @@ async function handle_take_attendance(request, response) {
             console.log("Attendance has already been taken today");
         } else {
             console.log("Attendence not taken today... Taking attendance");
+			
+			console.log(`requested url frm browser :${request.url}`);
+	
+			const parsed_url = url.parse(request.url);
+			const message = parsed_url.pathname;
+			message_text = message.split("/")[2];
 
             const attendance = {
-				timestamp: new Date(),
-				email:'resmiishani@gmail.com'
+				email:message_text,
+				timestamp: new Date()
+				
 				
                 
             };
+			
             model.insertAttendance(attendance);
         }
 
@@ -78,17 +89,16 @@ async function handle_read_attendance(request, response) {
         const timestamps = attendances.map(
             (entity) => moment(entity.timestamp).tz("America/New_York").toString()
         );
+		
 		 const emails = attendances.map(
             (entity_email) => entity_email.email
         );
 		
 
         const timestamps_html = timestamps.join("<br />\n");
-		//const email_html =emails.join("<br />\n");
+		const email_html =emails.join("<br />\n");
 		
-		
-		
-        const responseBody = `<p>${emails}${timestamps_html}</p>`;
+		const responseBody = `<p>${email_html}${timestamps_html}</p>`;
 		
         response.setHeader("Content-Length", responseBody.length);
         response.write(responseBody);
@@ -109,7 +119,7 @@ const process_request = function (request, response) {
 
     const parsed_url = url.parse(request.url);
 
-    if (parsed_url.pathname === "/take_attendance/resmiishani@gmail.com") {
+    if ( parsed_url.pathname.startsWith("/take_attendance")) {
         handle_take_attendance(request, response);
     } else if (parsed_url.pathname === "/read_attendance") {
         handle_read_attendance(request, response);

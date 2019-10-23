@@ -19,7 +19,7 @@ function getAttendances() {
     const query = datastore
         .createQuery("attendance")
         .order("timestamp", {descending: true})
-        .limit(10);
+        .limit(100);
 
     return datastore.runQuery(query);
 }

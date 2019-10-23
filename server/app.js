@@ -3,8 +3,8 @@
 
 const http = require("http");
 const url = require("url");
-const moment = require("moment-timezone");
 let message_text = "";
+const moment = require("moment-timezone");
 
 const model = require("./model");
 
@@ -22,23 +22,30 @@ function getEndOf_Local_Today() {
     const startOfToday = getStartOf_Local_Today();
 
     return moment(startOfToday).add(1, "day").toDate();
+	
 }
+
+
 
 
 // check if todays_attendance already has a date with
 // the same calendar day as currentDate
 async function checkIf_attendanceTakenToday(email) {
 
+
     const startOfToday = getStartOf_Local_Today();
 
     const endOfToday = getEndOf_Local_Today();
-	
-	email=" ";
+		
 
     const [entities] = await model.getAttendances_between(
-        email,startOfToday,
-        endOfToday
+        startOfToday,
+        endOfToday,
+        email
     );
+	
+		
+		
 
     return entities.length > 0;
 }
@@ -47,68 +54,78 @@ async function checkIf_attendanceTakenToday(email) {
 
 
 async function handle_take_attendance(request, response) {
-    try {
-        const flag = await checkIf_attendanceTakenToday();
+	try{
+		
+		const parsed_url = url.parse(request.url);
+        const message = parsed_url.pathname;
+		const email = message.split("/")[2];
+		console.log(email);        
         
-        if (flag === true) {
-            console.log("Attendance has already been taken today");
-        } else {
-            console.log("Attendence not taken today... Taking attendance");
-			
-			console.log(`requested url frm browser :${request.url}`);
+    const flag = await checkIf_attendanceTakenToday(email);
 	
-			const parsed_url = url.parse(request.url);
-			const message = parsed_url.pathname;
-			message_text = message.split("/")[2];
-
-            const attendance = {
-				email:message_text,
-				timestamp: new Date()
-				
-				
-                
-            };
-			
-            model.insertAttendance(attendance);
-        }
-
-        response.end();
     
-    } catch(err) {
-        console.log(err);
-        console.log(err.message);
-        
-        response.end();
-    }
+			if (flag === true) {
+			console.log("Attendance has already been taken today");
+		} else {
+			console.log("Attendence not taken today... Taking attendance");
+			
+				console.log(`requested url frm browser :${request.url}`);
+	
+
+					const attendance = {
+						email: email,
+						timestamp: new Date()
+						
+					};
+			model.insertAttendance(attendance);
+		}
+
+		response.end();
+	}catch(err)	{
+		console.log(err);
+		console.log(err.message);
+		
+		response.end();
+	}	
+	
 }
 
 async function handle_read_attendance(request, response) {
-    try {
-        const [attendances] = await model.getAttendances();
+	try{
+    const [attendances] = await model.getAttendances();
+	
+	
 
-        const timestamps = attendances.map(
-            (entity) => moment(entity.timestamp).tz("America/New_York").toString()
-        );
+    const timestamps = attendances.map(
+        (entity) => moment(entity.timestamp).tz("America/New_York").toString()
+		);
 		
-		 const emails = attendances.map(
-            (entity_email) => entity_email.email
-        );
+	const emails = 	attendances.map(
+		(entity_email) => entity_email.email
+		);
+	
 		
-
-        const timestamps_html = timestamps.join("<br />\n");
-		const email_html =emails.join("<br />\n");
-		
+    
+	
+	//const email_html = emails.join("<br />\n");
+   const timestamps_html = timestamps.join("<br />\n");
+const email_html = emails.join("<br />\n");
+	
 		const responseBody = `<table><tr><td>${timestamps_html}</td>&nbsp;<td>${email_html}</td></tr></table>`;
+	
+	//const responseBody = `<div>${email_html}</div><div>${timestamps_html}<div>`;
+
+    response.setHeader("Content-Length", responseBody.length);
+    response.write(responseBody);
+    response.end();
+	}catch(err){
+		console.log(err);
+		console.log(err.message);
 		
-        response.setHeader("Content-Length", responseBody.length);
-        response.write(responseBody);
-        response.end();
-    } catch(err) {
-        console.log(err);
-        console.log(err.message);
-        
-        response.end();
-    }
+		response.end();
+		
+	}
+	
 }
 
 
@@ -116,11 +133,14 @@ async function handle_read_attendance(request, response) {
 
 const process_request = function (request, response) {
     console.log(`requested url frm browser :${request.url}`);
+	
 
     const parsed_url = url.parse(request.url);
+	
 
-    if ( parsed_url.pathname.startsWith("/take_attendance")) {
+    if ( parsed_url.pathname.startsWith("/take_attendance") ) {
         handle_take_attendance(request, response);
+		console.log(parsed_url.pathname)
     } else if (parsed_url.pathname === "/read_attendance") {
         handle_read_attendance(request, response);
     }

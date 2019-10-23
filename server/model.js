@@ -25,11 +25,12 @@ function getAttendances() {
 }
 
 
-function getAttendances_between(startDate, endDate,email) {
+function getAttendances_between(startDate, endDate, email) {
     const query = datastore
         .createQuery("attendance")
         .filter("timestamp", ">=", startDate)
-        .filter("timestamp", "<", endDate);
+        .filter("timestamp", "<", endDate)
+        .filter ("email", "=", email);
 
     return datastore.runQuery(query);
 }

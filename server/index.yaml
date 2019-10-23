@@ -1,0 +1,6 @@
+indexes:
+
+- kind: attendance
+  properties:
+  - name: email
+  - name: timestamp

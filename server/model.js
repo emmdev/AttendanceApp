@@ -2,9 +2,7 @@
 "use strict";
 
 const {Datastore} = require("@google-cloud/datastore");
-
 const datastore = new Datastore();
-
 
 
 function insertAttendance(attendance) {
@@ -34,7 +32,6 @@ function getAttendances_between(startDate, endDate, email) {
 
     return datastore.runQuery(query);
 }
-
 
 
 module.exports = {

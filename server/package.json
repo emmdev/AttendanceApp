@@ -22,7 +22,7 @@
     "moment-timezone": "^0.5.26"
   },
   "devDependencies": {
-    "mocha": "^6.1.4",
+    "mocha": "^10.2.0",
     "supertest": "^4.0.2"
   }
 }
